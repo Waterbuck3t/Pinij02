@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dynamic Table Example</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ผู้รายงาน : นายเขตอุดมพร นิ่มประเสริฐ</h1>
+
+    <div id="table-container"></div>
+
+    <script>
+        async function generateTable() {
+            try {
+                const response = await fetch('https://covid19.ddc.moph.go.th/api/Cases/today-cases-by-provinces');
+                const data = await response.json();
+                var top10 = data.sort(function(a, b) { return a.total_case < b.total_case ? 1 : -1; })
+                .slice(0, 10);
+                let table = '<table>';
+                table += '<tr><th>ผู้ป่วยรวม</th><th>Province</th></tr>';
+                top10.forEach(item => {
+                    table += `<tr><td>${item.total_case}</td><td>${item.province}</td></tr>`;
+                });
+                table += '</table>';
+                const tableContainer = document.getElementById('table-container');
+                tableContainer.innerHTML = table;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        generateTable();  
+    </script>
+</body>
+
+</html>
